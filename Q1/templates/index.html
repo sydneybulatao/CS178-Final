@@ -1,0 +1,118 @@
+<html>
+<header>
+    <title>Message Content Classification</title>
+    <link href="static/css/nouislider.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css" media="screen" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="static/js/nouislider.min.js"></script>
+    <script src="static/js/script.js"></script> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+</header>
+
+<body>
+  <h1 style="text-align: center;">Message Content Classification</h1>
+
+  <div class="button-row">
+    <button class="action-btn">Spam/Junk</button>
+    <button class="action-btn">Typical Chatter</button>
+    <button class="action-btn">Event Reports</button>
+  </div>
+  
+  <div class="main-container">
+  <div id="filters-container">
+    <h3>Start Time: </h3>
+    <select name="start-time" id="start-time" onchange="">
+      {% for option in start_options %}
+        <option value="{{option}}">{{ option }}</option>
+      {% endfor %}
+    </select>
+
+    <h3>End Time: </h3>
+    <select name="end-time" id="end-time" onchange="">
+      {% for option in end_options %}
+        <option value="{{option}}">{{ option }}</option>
+      {% endfor %}
+    </select>
+
+    <h3>Hours Since Emergency Call</h3>
+    <div id="emergency-time-slider" class="slider" style="width:200pt; display: inline-block"></div>
+
+    <h3>Key Words</h3>
+    <div class="word-input-group">
+      <input type="text" id="wordInput" placeholder="Enter a word">
+      <button id="addWordBtn" onclick="addWord()">Add</button>
+    </div>
+    <ul id="wordList"></ul>
+    
+
+    <h3>Authors</h3>
+    <div class="multiselect">
+      <div class="selectBox" onclick="showCheckboxes()">
+      <select>
+        <option>Select authors...</option>
+      </select>
+      <div class="overSelect"></div>
+    </div>
+    <div id="checkboxes">
+      {% for author in author_options %}
+       <label for="{{ author }}">
+        <input type="checkbox" id="{{ author }}"/>{{ author }}
+       </label>
+      {% endfor %}
+    </div>
+    </div>
+  </div>
+
+  <div id="plot-container">
+    <!-- put data plot here -->
+    <div id="word-cloud"></div>
+    <div id="authors-histogram"></div>
+    <div id="messages-list"></div>
+    <div id="summary"></div>
+  </div>
+</div>
+</body>
+
+<script>
+  margin = {top: 45, right: 45, bottom: 45, left: 45},
+  width = 460 - margin.left - margin.right,
+  height = 360 - margin.top - margin.bottom;
+
+  draw_slider('emergency-time', 0, 5, 0.25)
+
+  var expanded = false;
+
+  function showCheckboxes() {
+    var checkboxes = document.getElementById("checkboxes");
+    if (!expanded) {
+      checkboxes.style.display = "block";
+      expanded = true;
+    } else {
+      checkboxes.style.display = "none";
+      expanded = false;
+    }
+  }
+
+  const words = [];
+  
+  function addWord() {
+    const input = document.getElementById('wordInput');
+    const word = input.value.trim();
+
+    if (word) {
+      words.push(word);
+
+      const listItem = document.createElement('li');
+      listItem.textContent = word;
+      document.getElementById('wordList').appendChild(listItem);
+
+      input.value = ''; // Clear the input field
+      input.focus();    // Put cursor back in the field
+    }
+  }
+
+  update()
+</script>
+
+</html>

@@ -1,0 +1,203 @@
+/* Global body styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fc;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main header styling */
+h1 {
+  text-align: center;
+  margin-top: 30px;
+  color: #333;
+}
+
+/* Container for filters */
+#filters-container {
+  width: 50%;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading for sections */
+h3 {
+  color: #444;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Styling for the dropdowns */
+select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Styling for the slider */
+#emergency-time-slider {
+  margin-bottom: 40px;
+  margin-left: 15px;
+}
+
+/* Multi-select dropdown for authors */
+#authors-dropdown {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Style the select2 dropdown for search functionality */
+.select2-container {
+  width: 100% !important;
+}
+
+/* Add some space around the form */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Adjusting button styles (in case there's a submit button in future) */
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.multiselect {
+  width: 200px;
+}
+
+.selectBox {
+  position: relative;
+}
+
+.selectBox select {
+  width: 100%;
+  font-weight: bold;
+}
+
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#checkboxes {
+  display: none;
+  border: 1px #dadada solid;
+}
+
+#checkboxes label {
+  display: block;
+}
+
+#checkboxes label:hover {
+  background-color: #1e90ff;
+}
+
+/* Flex layout to arrange filters and plot side by side */
+.main-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0 30px;
+}
+
+/* Filters sidebar on the left */
+#filters-container {
+  width: 300px;
+  margin: 30px 20px 30px 0;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+/* Placeholder for the plot content */
+#plot-container {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #fff;
+  min-height: 400px; /* adjust as needed */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Style for the word input */
+#wordInput {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+/* Style for the Add Word button */
+#addWordBtn {
+  padding: 6px 14px;
+  font-size: 14px;
+  background-color: #e0e0e0;
+  color: #333;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#addWordBtn:hover {
+  background-color: #d5d5d5;
+}
+
+/* Optional: Flex layout for input + button */
+.word-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Container to center the button row */
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 30px 0;
+}
+
+/* Grey-themed minimal button style */
+.action-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #e0e0e0;
+  color: #333;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #d5d5d5;
+}
