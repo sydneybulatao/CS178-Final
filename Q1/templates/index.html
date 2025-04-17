@@ -22,14 +22,14 @@
   <div class="main-container">
   <div id="filters-container">
     <h3>Start Time: </h3>
-    <select name="start-time" id="start-time" onchange="">
+    <select name="start-time" id="start-time">
       {% for option in start_options %}
         <option value="{{option}}">{{ option }}</option>
       {% endfor %}
     </select>
 
     <h3>End Time: </h3>
-    <select name="end-time" id="end-time" onchange="">
+    <select name="end-time" id="end-time">
       {% for option in end_options %}
         <option value="{{option}}">{{ option }}</option>
       {% endfor %}
@@ -62,13 +62,16 @@
       {% endfor %}
     </div>
     </div>
+
+    <button onclick="update()">Filter</button>
   </div>
 
   <div id="plot-container">
-    <!-- put data plot here -->
     <div id="word-cloud"></div>
     <div id="authors-histogram"></div>
-    <div id="messages-list"></div>
+    <div id="messages-list" class="scroll-table">
+        {{ df | safe }}
+      </div>   
     <div id="summary"></div>
   </div>
 </div>
