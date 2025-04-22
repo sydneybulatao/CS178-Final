@@ -29,7 +29,7 @@ def index():
   time_options = generate_time_options(5, 10, 15)
 
   # Get list of all authors in dataset
-  authors = df[df['type'] == 'mbdata']['author'].unique()
+  authors = sorted(df[df['type'] == 'mbdata']['author'].unique())
   
   return render_template(
     'index.html',
@@ -39,29 +39,72 @@ def index():
     df=html_df
   )
 
+def time_to_most_recent_emergency(ccdata_df, mbdata_row):
+  # Find the most recent emergency call before the current 'mbdata' row
+  recent_ccdata = ccdata_df[ccdata_df['date'] <= mbdata_row['date']].iloc[-1:]  # Get the most recent one
+  if not recent_ccdata.empty:
+    # Calculate the time difference (absolute value)
+    return mbdata_row['date'] - recent_ccdata['date'].iloc[0]
+  return pd.NaT  # If no previous emergency call, return Not a Time
+
 @app.route('/update', methods=["POST"])
 def update():
   request_data = request.get_json()
 
-  # Generate time options from 5 PM to 10 PM in 15 minute increments
-  time_options = generate_time_options(5, 10, 15)
-
-  # Get list of all authors in dataset
-  authors = df[df['type'] == 'mbdata']['author'].unique()
-
-  # Filter by authors
   filtered_df = df.copy(deep=True)
+  filtered_df['date'] = pd.to_datetime(filtered_df['date'], format='%Y-%m-%d %H:%M:%S')
+
+  ### Filter by start and end time
+  if 'startTime' in request_data and 'endTime' in request_data:
+    start_time_str = request_data['startTime']
+    end_time_str = request_data['endTime']
+
+    # Convert to datetime objects
+    start_time = datetime.strptime(start_time_str, '%I:%M %p')
+    end_time = datetime.strptime(end_time_str, '%I:%M %p')
+    start_time = start_time.replace(year=filtered_df['date'].dt.year.iloc[0], month=filtered_df['date'].dt.month.iloc[0], day=filtered_df['date'].dt.day.iloc[0])
+    end_time = end_time.replace(year=filtered_df['date'].dt.year.iloc[0], month=filtered_df['date'].dt.month.iloc[0], day=filtered_df['date'].dt.day.iloc[0])
+
+    # Filter dataframe by time range
+    filtered_df = filtered_df[(filtered_df['date'] >= start_time) & (filtered_df['date'] <= end_time)]
+
+  ### Filter by time to emergency call
+  # Separate 'ccdata' (emergency calls) and 'mbdata' (messages)
+  ccdata_df = filtered_df[filtered_df['type'] == 'ccdata']
+  mbdata_df = filtered_df[filtered_df['type'] == 'mbdata']
+
+  # Sort to get in ascending order
+  ccdata_df = ccdata_df.sort_values(by='date', ascending=True)
+  mbdata_df = mbdata_df.sort_values(by='date', ascending=True)
+
+  # Calculate time to most recent emergency call for each mbdata entry 
+  mbdata_df['time_to_emergency'] = mbdata_df.apply(
+    lambda row: (time_to_most_recent_emergency(ccdata_df, row).total_seconds() / 60) 
+    if pd.notnull(time_to_most_recent_emergency(ccdata_df, row)) else np.nan,
+    axis=1
+)
+
+  if 'emergencyMinutes' in request_data:
+    emergency_minutes_start = float(request_data['emergencyMinutes'][0]) 
+    emergency_minutes_end = float(request_data['emergencyMinutes'][1])   
+
+    # Filter rows based on whether time_to_emergency is within the specified range
+    mbdata_df = mbdata_df[
+    (mbdata_df['time_to_emergency'] >= emergency_minutes_start) & 
+    (mbdata_df['time_to_emergency'] <= emergency_minutes_end)
+    ]
+
+    # Merge the mbdata rows with the time to emergency column back to the filtered_df
+    filtered_df = pd.concat([mbdata_df, ccdata_df])
+
+  ### Filter by authors
   if request_data['authors'] and request_data['authors'] != []:
     filtered_df = filtered_df[filtered_df['author'].isin(request_data['authors'])]
 
-  # Filter by keywords in the message (case-insensitive)
+  ### Filter by keywords in the message (case-insensitive)
   if request_data['keywords']:
       keyword_pattern = '|'.join([rf'\b{k}\b' for k in request_data['keywords']])
       filtered_df = filtered_df[filtered_df['message'].str.contains(keyword_pattern, case=False, na=False)]
-
-  # TODO: filter by start and end time
-
-  # TODO: filter by time to emergency call
   
   print(filtered_df)
 
@@ -71,7 +114,6 @@ def update():
   return {
     "df": html_df
   }
-
 
 if __name__ == '__main__':
     app.run(debug=True)

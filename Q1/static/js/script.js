@@ -7,9 +7,6 @@ function draw_slider(column, min, max, step){
     step: step,
     range: {'min': min, 'max': max}
   });
-  // slider.noUiSlider.on('change', function(){
-  //     update(scatter1_svg, scatter2_svg, scatter1_scale, scatter2_scale)
-  // });
 }
 
 function getFilterValues() {
@@ -31,9 +28,9 @@ function getFilterValues() {
   // Emergency slider value (example assumes you're using noUiSlider)
   const slider = document.getElementById('emergency-time-slider');
   if (slider.noUiSlider) {
-      filterValues['emergencyHours'] = slider.noUiSlider.get(); // Might return a string or array depending on config
+      filterValues['emergencyMinutes'] = slider.noUiSlider.get(); // Might return a string or array depending on config
   } else {
-      filterValues['emergencyHours'] = null;
+      filterValues['emergencyMinutes'] = null;
   }
 
   console.log(filterValues);
@@ -58,4 +55,28 @@ function update(){
     // Update display with results
     document.getElementById('messages-list').innerHTML = results.df;
 })
+}
+
+function resetFilters() {
+  // Reset start and end time select dropdowns to their default values
+  document.getElementById("start-time").selectedIndex = 0;
+  document.getElementById("end-time").selectedIndex = document.getElementById("end-time").options.length - 1;
+
+  // Reset the emergency slider 
+  var slider = document.getElementById('emergency-time-slider');
+  slider.noUiSlider.set([0, 10]);
+
+  // Clear keyword list
+  const wordList = document.getElementById('wordList');
+  wordList.innerHTML = ''; // Clear the list
+
+  // Clear word input field
+  const wordInput = document.getElementById('wordInput');
+  wordInput.value = '';
+
+  // Deselect all author checkboxes
+  const checkboxes = document.querySelectorAll("#checkboxes input[type='checkbox']");
+  checkboxes.forEach(cb => cb.checked = false);
+
+  update()
 }

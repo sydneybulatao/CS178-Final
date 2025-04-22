@@ -31,11 +31,11 @@
     <h3>End Time: </h3>
     <select name="end-time" id="end-time">
       {% for option in end_options %}
-        <option value="{{option}}">{{ option }}</option>
+        <option value="{{ option }}" {% if option == end_options[-1] %}selected{% endif %}>{{ option }}</option>
       {% endfor %}
     </select>
 
-    <h3>Hours Since Emergency Call</h3>
+    <h3>Minutes Since Emergency Call</h3>
     <div id="emergency-time-slider" class="slider" style="width:200pt; display: inline-block"></div>
 
     <h3>Key Words</h3>
@@ -63,7 +63,12 @@
     </div>
     </div>
 
-    <button onclick="update()">Filter</button>
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <button type="button" id="reset-btn" onclick="resetFilters()">Reset</button>
+  
+      <button type="button" id="filter-btn" onclick="update()">Filter</button>
+    </div>
+    
   </div>
 
   <div id="plot-container">
@@ -82,7 +87,7 @@
   width = 460 - margin.left - margin.right,
   height = 360 - margin.top - margin.bottom;
 
-  draw_slider('emergency-time', 0, 5, 0.25)
+  draw_slider('emergency-time', 0, 10, 1)
 
   var expanded = false;
 
