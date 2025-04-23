@@ -1,4 +1,4 @@
-function draw_slider(column, min, max, step){
+function draw_slider(column, min, max, step) {
   slider = document.getElementById(column+'-slider')
   noUiSlider.create(slider, {
     start: [min, max],
@@ -37,7 +37,11 @@ function getFilterValues() {
   return filterValues;
 }
 
-function update(){
+function update() {
+  // Notify that applying filters
+  document.getElementById('messages-list').innerHTML = "Applying filters...";
+  document.getElementById('ai-summary-text').innerHTML = "Generating summary...";
+
   // Get values of all filters
   const filterData = getFilterValues();
   // Send to python
@@ -54,6 +58,7 @@ function update(){
 
     // Update display with results
     document.getElementById('messages-list').innerHTML = results.df;
+    document.getElementById('ai-summary-text').innerHTML = results.summary;
 })
 }
 
@@ -79,4 +84,19 @@ function resetFilters() {
   checkboxes.forEach(cb => cb.checked = false);
 
   update()
+}
+
+// Set all filters to pre-set combination for spam classification
+function spam_filter() {
+  return
+}
+
+// Set all filters to pre-set combination for chatter classification
+function chatter_filter() {
+  return
+}
+
+// Set all filters to pre-set combinatino for report classification
+function report_filter() {
+  return
 }

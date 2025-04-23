@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
+from llmproxy import generate
 
 app = Flask(__name__)
 df = pd.read_csv("Data/combined_clean.csv")
@@ -46,6 +47,38 @@ def time_to_most_recent_emergency(ccdata_df, mbdata_row):
     # Calculate the time difference (absolute value)
     return mbdata_row['date'] - recent_ccdata['date'].iloc[0]
   return pd.NaT  # If no previous emergency call, return Not a Time
+
+instructions = """
+You are an intelligent assistant analyzing a series of posts from a public message board.
+Summarize the content of the messages, providing information about the authors and 
+messages posted. 
+
+Your task is to:
+Write **two sentences** summarizing the content of the messages on the board.
+
+Be objective, concise, and avoid guessing if the data is unclear.
+
+OUTPUT FORMAT:
+<2 sentence summary>
+"""
+def generate_summary(filtered_df):
+  # Format messages 
+  messages = "\n".join(
+    f"{row['author']}: {row['message']}"
+    for _, row in filtered_df.iterrows()
+  )
+
+  # Send data to LLM to summarize
+  response = generate(model = '4o-mini',
+    system = instructions,
+    query = f"""Summarize the following messages posted on a message board:
+                {messages}""",
+    temperature = 0.0,
+    lastk = 0,
+    session_id = "summary_session_cs178-final",
+    rag_usage = False)
+
+  return response.get("response", "") if isinstance(response, dict) else response
 
 @app.route('/update', methods=["POST"])
 def update():
@@ -105,14 +138,18 @@ def update():
   if request_data['keywords']:
       keyword_pattern = '|'.join([rf'\b{k}\b' for k in request_data['keywords']])
       filtered_df = filtered_df[filtered_df['message'].str.contains(keyword_pattern, case=False, na=False)]
-  
-  print(filtered_df)
 
   # Format df for html
   html_df = filtered_df[filtered_df['type'] == 'mbdata'][['author', 'message']].to_html(classes="dataframe", index=False)
 
+  # Generate LLM summary
+  summary = generate_summary(filtered_df)
+  print("LLM SUMMARY:")
+  print(summary)
+
   return {
-    "df": html_df
+    "df": html_df,
+    "summary": summary
   }
 
 if __name__ == '__main__':

@@ -14,9 +14,9 @@
   <h1 style="text-align: center;">Message Content Classification</h1>
 
   <div class="button-row">
-    <button class="action-btn">Spam/Junk</button>
-    <button class="action-btn">Typical Chatter</button>
-    <button class="action-btn">Event Reports</button>
+    <button class="action-btn" onclick="spam_filter()">Spam/Junk</button>
+    <button class="action-btn" onclick="chatter_filter()">Typical Chatter</button>
+    <button class="action-btn" onclick="report_filter()">Event Reports</button>
   </div>
   
   <div class="main-container">
@@ -81,7 +81,7 @@
   <!-- AI-Generated Summary Box -->
   <div id="ai-summary-box" style="padding: 20px; margin-top: 20px; background-color: #f4f4f4; border: 1px solid #ccc;">
     <h3>AI-Generated Summary</h3>
-    <p id="ai-summary-text">Put summary here.</p>
+    <p id="ai-summary-text">Apply filters to generate a summary.</p>
   </div>
 
   </div>
