@@ -1,16 +1,17 @@
 /* Global body styling */
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f7fc;
+  background-color: #fff6f2;
   margin: 0;
   padding: 0;
+  color: #666666;
 }
 
 /* Main header styling */
 h1 {
   text-align: center;
   margin-top: 30px;
-  color: #333;
+  color: #CF5376;
 }
 
 /* Container for filters */
@@ -18,14 +19,14 @@ h1 {
   width: 50%;
   margin: 30px auto;
   padding: 20px;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(255, 133, 89, 0.1);
 }
 
 /* Heading for sections */
 h3 {
-  color: #444;
+  color: #CF5376;
   font-size: 18px;
   margin-bottom: 10px;
 }
@@ -39,6 +40,7 @@ select {
   border: 1px solid #ccc;
   font-size: 16px;
   box-sizing: border-box;
+  color: #666666;
 }
 
 /* Styling for the slider */
@@ -55,34 +57,38 @@ select {
   border: 1px solid #ccc;
   font-size: 16px;
   box-sizing: border-box;
+  color: #666666;
 }
 
-/* Style the select2 dropdown for search functionality */
 .select2-container {
   width: 100% !important;
 }
 
-/* Add some space around the form */
 .form-group {
   margin-bottom: 20px;
 }
 
-/* Adjusting button styles (in case there's a submit button in future) */
-button {
+/* Buttons */
+button,
+#addWordBtn,
+.action-btn {
   padding: 8px 16px;
   font-size: 14px;
-  background-color: #e0e0e0;
-  color: #333;
-  border: 1px solid #bbb;
+  background-color: #FF8559;
+  color: #ffffff;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-button:hover {
-  background-color: #d5d5d5;
+button:hover,
+#addWordBtn:hover,
+.action-btn:hover {
+  background-color: #E65447;
 }
 
+/* Multiselect controls */
 .multiselect {
   width: 200px;
 }
@@ -106,7 +112,7 @@ button:hover {
 
 #checkboxes {
   display: none;
-  border: 1px #dadada solid;
+  border: 1px solid #dadada;
 }
 
 #checkboxes label {
@@ -114,10 +120,10 @@ button:hover {
 }
 
 #checkboxes label:hover {
-  background-color: #1e90ff;
+  background-color: #FFB578;
 }
 
-/* Flex layout to arrange filters and plot side by side */
+/* Flex layout */
 .main-container {
   display: flex;
   flex-direction: row;
@@ -125,28 +131,28 @@ button:hover {
   padding: 0 30px;
 }
 
-/* Filters sidebar on the left */
+/* Sidebar */
 #filters-container {
   width: 300px;
   margin: 30px 20px 30px 0;
   padding: 20px;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(255, 133, 89, 0.1);
   flex-shrink: 0;
 }
 
-/* Placeholder for the plot content */
+/* Plot area */
 #plot-container {
   flex-grow: 1;
   padding: 30px;
-  background-color: #fff;
-  min-height: 400px; /* adjust as needed */
+  background-color: #ffffff;
+  min-height: 400px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 8px rgba(255, 133, 89, 0.05);
 }
 
-/* Style for the word input */
+/* Word input */
 #wordInput {
   width: 100%;
   padding: 12px;
@@ -155,31 +161,17 @@ button:hover {
   border-radius: 6px;
   box-sizing: border-box;
   margin-bottom: 10px;
+  color: #666666;
 }
 
-/* Style for the Add Word button */
-#addWordBtn {
-  padding: 6px 14px;
-  font-size: 14px;
-  background-color: #e0e0e0;
-  color: #333;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#addWordBtn:hover {
-  background-color: #d5d5d5;
-}
-
-/* Optional: Flex layout for input + button */
+/* Word input group */
 .word-input-group {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-/* Container to center the button row */
+/* Button row */
 .button-row {
   display: flex;
   justify-content: center;
@@ -187,62 +179,47 @@ button:hover {
   margin: 30px 0;
 }
 
-/* Grey-themed minimal button style */
-.action-btn {
-  padding: 8px 16px;
-  font-size: 14px;
-  background-color: #e0e0e0;
-  color: #333;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.action-btn:hover {
-  background-color: #d5d5d5;
-}
-
-/* Scrollable DataFrame table inside #messages-list */
+/* Message list section */
 #messages-list {
   max-height: 400px;
   overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 15px;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(255, 133, 89, 0.05);
   margin-top: 20px;
 }
 
-/* Style the actual table inside messages-list */
+/* Table inside messages list */
 #messages-list table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  color: #333;
+  color: #CF5376;
 }
 
 /* Table header */
 #messages-list th {
-  background-color: #f2f2f2;
+  background-color: #FFB578;
   position: sticky;
   top: 0;
   z-index: 1;
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid #ccc;
+  color: #ffffff;
 }
 
 /* Table rows */
 #messages-list td {
   padding: 10px;
   border-bottom: 1px solid #eee;
-  background-color: white;
+  background-color: #ffffff;
+  color: #666666;
 }
 
-/* Optional: zebra-striping for readability */
+/* Zebra-striping */
 #messages-list tr:nth-child(even) td {
-  background-color: #fafafa;
+  background-color: #fff0e9;
 }
-
