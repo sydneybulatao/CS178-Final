@@ -109,17 +109,68 @@ function resetFilters() {
   update();
 }
 
-// Set all filters to pre-set combination for spam classification
-function spam_filter() {
-  return
-}
+// Preset filters
+function preset_filter(mode) {
+  // Select preset
+  preset = presets[mode]
 
-// Set all filters to pre-set combination for chatter classification
-function chatter_filter() {
-  return
-}
+  // Set start time
+  const startSelect = document.getElementById("start-time");
+  if (preset.startTime) {
+    for (let i = 0; i < startSelect.options.length; i++) {
+      if (startSelect.options[i].value === preset.startTime) {
+        startSelect.selectedIndex = i;
+        break;
+      }
+    }
+  } else {
+    startSelect.selectedIndex = 0;
+  }
 
-// Set all filters to pre-set combinatino for report classification
-function report_filter() {
-  return
+  // Set end time
+  const endSelect = document.getElementById("end-time");
+  if (preset.endTime) {
+    for (let i = 0; i < endSelect.options.length; i++) {
+      if (endSelect.options[i].value === preset.endTime) {
+        endSelect.selectedIndex = i;
+        break;
+      }
+    }
+  } else {
+    endSelect.selectedIndex = endSelect.options.length - 1;
+  }
+
+  // Set emergency slider
+  const slider = document.getElementById('emergency-time-slider');
+  if (preset.emergencyMinutes && preset.emergencyMinutes.length === 2) {
+    slider.noUiSlider.set(preset.emergencyMinutes);
+  } else {
+    slider.noUiSlider.set([0, 10]);
+  }
+
+  // Set keywords
+  words.length = 0;
+  const wordList = document.getElementById('wordList');
+  wordList.innerHTML = '';
+  if (preset.keywords && preset.keywords.length > 0) {
+    preset.keywords.forEach(kw => {
+      words.push(kw);
+      const li = document.createElement('li');
+      li.textContent = kw;
+      wordList.appendChild(li);
+    });
+  }
+
+  // Set authors
+  const checkboxes = document.querySelectorAll("#checkboxes input[type='checkbox']");
+  const selectedAuthors = preset.authors || [];
+
+  checkboxes.forEach(cb => {
+    cb.checked = selectedAuthors.includes(cb.id);
+  });
+
+  const selectedAuthorsList = document.getElementById('selected-authors-list');
+  selectedAuthorsList.innerHTML = selectedAuthors.map(author => `<li>${author}</li>`).join('');
+
+  update();
 }

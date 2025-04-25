@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 from llmproxy import generate
+from collections import Counter
+import re
 
 app = Flask(__name__)
 df = pd.read_csv("Data/combined_clean.csv")
@@ -105,17 +107,17 @@ def update():
       print(f"Error parsing time filters: {e}")
 
   ### Filter by time to emergency call
-  ccdata_df = filtered_df[filtered_df['type'] == 'ccdata'].sort_values(by='date')
-  mbdata_df = filtered_df[filtered_df['type'] == 'mbdata'].sort_values(by='date')
-
-  mbdata_df['time_to_emergency'] = mbdata_df.apply(
-    lambda row: (time_to_most_recent_emergency(ccdata_df, row).total_seconds() / 60) 
-    if pd.notnull(time_to_most_recent_emergency(ccdata_df, row)) else np.nan,
-    axis=1
-  )
-
   if 'emergencyMinutes' in request_data and request_data['emergencyMinutes']:
     try:
+      ccdata_df = filtered_df[filtered_df['type'] == 'ccdata'].sort_values(by='date')
+      mbdata_df = filtered_df[filtered_df['type'] == 'mbdata'].sort_values(by='date')
+
+      mbdata_df['time_to_emergency'] = mbdata_df.apply(
+          lambda row: (time_to_most_recent_emergency(ccdata_df, row).total_seconds() / 60) 
+          if pd.notnull(time_to_most_recent_emergency(ccdata_df, row)) else np.nan,
+          axis=1
+      )
+
       emergency_minutes_start = float(request_data['emergencyMinutes'][0]) 
       emergency_minutes_end = float(request_data['emergencyMinutes'][1])   
 

@@ -228,3 +228,20 @@ button:hover,
 #messages-list tr:nth-child(even) td {
   background-color: #fff0e9;
 }
+
+#selected-authors-list {
+  max-height: 120px;
+  width: 250px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 5px 10px;
+  background-color: #fff;
+  list-style-type: none;
+  margin: 0 0 20px 0;  /* This adds bottom spacing */
+}
+
+#selected-authors-list li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
