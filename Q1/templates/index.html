@@ -61,6 +61,9 @@
        </label>
       {% endfor %}
     </div>
+    <div id="selected-authors" style="margin-top: 10px;">
+      <ul id="selected-authors-list"></ul>
+    </div>    
     </div>
 
     <div style="display: flex; gap: 10px; margin-bottom: 20px;">
@@ -106,6 +109,22 @@
       checkboxes.style.display = "none";
       expanded = false;
     }
+    document.querySelectorAll("#checkboxes input[type='checkbox']").forEach(cb => {
+      cb.addEventListener('change', updateSelectedAuthors);
+    });
+  }
+
+  function updateSelectedAuthors() {
+    const checked = document.querySelectorAll("#checkboxes input[type='checkbox']:checked");
+    const selectedList = document.getElementById('selected-authors-list');
+    
+    // Clear and re-render selected authors
+    selectedList.innerHTML = '';
+    checked.forEach(cb => {
+      const li = document.createElement('li');
+      li.textContent = cb.id;
+      selectedList.appendChild(li);
+    });
   }
 
   const words = [];
@@ -125,8 +144,6 @@
       input.focus();    // Put cursor back in the field
     }
   }
-
-  update()
 </script>
 
 </html>

@@ -113,6 +113,11 @@ button:hover,
 #checkboxes {
   display: none;
   border: 1px solid #dadada;
+  max-height: 150px; 
+  width: 250px;
+  overflow-y: auto;  
+  padding: 5px;
+  background-color: #fff;
 }
 
 #checkboxes label {

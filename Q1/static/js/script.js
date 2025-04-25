@@ -10,27 +10,46 @@ function draw_slider(column, min, max, step) {
 }
 
 function getFilterValues() {
-  // Dictionary to hold all filter values
   const filterValues = {};
 
   // Start and End Times
-  filterValues['startTime'] = document.getElementById("start-time").value;
-  filterValues['endTime'] = document.getElementById("end-time").value;
+  const startTimeSelect = document.getElementById("start-time");
+  const endTimeSelect = document.getElementById("end-time");
 
-  // Word list
+  const startTime = startTimeSelect.value;
+  const endTime = endTimeSelect.value;
+
+  const defaultStartTime = startTimeSelect.options[0].value;
+  const defaultEndTime = endTimeSelect.options[endTimeSelect.options.length - 1].value;
+
+  if ((startTime !== defaultStartTime) || (endTime !== defaultEndTime)) {
+    filterValues['startTime'] = startTime;
+    filterValues['endTime'] = endTime;
+  }
+
+  // Keywords
   const wordListItems = document.querySelectorAll("#wordList li");
-  filterValues['keywords'] = Array.from(wordListItems).map(item => item.textContent.trim());
+  const keywords = Array.from(wordListItems).map(item => item.textContent.trim());
+  if (keywords.length > 0) {
+    filterValues['keywords'] = keywords;
+  }
 
   // Selected authors
   const authorCheckboxes = document.querySelectorAll("#checkboxes input[type=checkbox]:checked");
-  filterValues['authors'] = Array.from(authorCheckboxes).map(cb => cb.id);
+  const selectedAuthors = Array.from(authorCheckboxes).map(cb => cb.id);
+  if (selectedAuthors.length > 0) {
+    filterValues['authors'] = selectedAuthors;
+  }
 
-  // Emergency slider value (example assumes you're using noUiSlider)
+  // Emergency slider value
   const slider = document.getElementById('emergency-time-slider');
   if (slider.noUiSlider) {
-      filterValues['emergencyMinutes'] = slider.noUiSlider.get(); // Might return a string or array depending on config
-  } else {
-      filterValues['emergencyMinutes'] = null;
+    const emergencyRange = slider.noUiSlider.get().map(val => parseFloat(val));
+    const defaultRange = [0, 10];
+
+    if (emergencyRange[0] !== defaultRange[0] || emergencyRange[1] !== defaultRange[1]) {
+      filterValues['emergencyMinutes'] = emergencyRange;
+    }
   }
 
   console.log(filterValues);
@@ -83,7 +102,11 @@ function resetFilters() {
   const checkboxes = document.querySelectorAll("#checkboxes input[type='checkbox']");
   checkboxes.forEach(cb => cb.checked = false);
 
-  update()
+  // Clear selected authors display
+  document.getElementById('selected-authors-list').innerHTML = '';
+
+  // Reset display
+  update();
 }
 
 // Set all filters to pre-set combination for spam classification

@@ -89,60 +89,57 @@ def update():
 
   ### Filter by start and end time
   if 'startTime' in request_data and 'endTime' in request_data:
-    start_time_str = request_data['startTime']
-    end_time_str = request_data['endTime']
+    try:
+      start_time_str = request_data['startTime']
+      end_time_str = request_data['endTime']
 
-    # Convert to datetime objects
-    start_time = datetime.strptime(start_time_str, '%I:%M %p')
-    end_time = datetime.strptime(end_time_str, '%I:%M %p')
-    start_time = start_time.replace(year=filtered_df['date'].dt.year.iloc[0], month=filtered_df['date'].dt.month.iloc[0], day=filtered_df['date'].dt.day.iloc[0])
-    end_time = end_time.replace(year=filtered_df['date'].dt.year.iloc[0], month=filtered_df['date'].dt.month.iloc[0], day=filtered_df['date'].dt.day.iloc[0])
+      start_time = datetime.strptime(start_time_str, '%I:%M %p')
+      end_time = datetime.strptime(end_time_str, '%I:%M %p')
 
-    # Filter dataframe by time range
-    filtered_df = filtered_df[(filtered_df['date'] >= start_time) & (filtered_df['date'] <= end_time)]
+      sample_date = filtered_df['date'].iloc[0]
+      start_time = start_time.replace(year=sample_date.year, month=sample_date.month, day=sample_date.day)
+      end_time = end_time.replace(year=sample_date.year, month=sample_date.month, day=sample_date.day)
+
+      filtered_df = filtered_df[(filtered_df['date'] >= start_time) & (filtered_df['date'] <= end_time)]
+    except Exception as e:
+      print(f"Error parsing time filters: {e}")
 
   ### Filter by time to emergency call
-  # Separate 'ccdata' (emergency calls) and 'mbdata' (messages)
-  ccdata_df = filtered_df[filtered_df['type'] == 'ccdata']
-  mbdata_df = filtered_df[filtered_df['type'] == 'mbdata']
+  ccdata_df = filtered_df[filtered_df['type'] == 'ccdata'].sort_values(by='date')
+  mbdata_df = filtered_df[filtered_df['type'] == 'mbdata'].sort_values(by='date')
 
-  # Sort to get in ascending order
-  ccdata_df = ccdata_df.sort_values(by='date', ascending=True)
-  mbdata_df = mbdata_df.sort_values(by='date', ascending=True)
-
-  # Calculate time to most recent emergency call for each mbdata entry 
   mbdata_df['time_to_emergency'] = mbdata_df.apply(
     lambda row: (time_to_most_recent_emergency(ccdata_df, row).total_seconds() / 60) 
     if pd.notnull(time_to_most_recent_emergency(ccdata_df, row)) else np.nan,
     axis=1
-)
+  )
 
-  if 'emergencyMinutes' in request_data:
-    emergency_minutes_start = float(request_data['emergencyMinutes'][0]) 
-    emergency_minutes_end = float(request_data['emergencyMinutes'][1])   
+  if 'emergencyMinutes' in request_data and request_data['emergencyMinutes']:
+    try:
+      emergency_minutes_start = float(request_data['emergencyMinutes'][0]) 
+      emergency_minutes_end = float(request_data['emergencyMinutes'][1])   
 
-    # Filter rows based on whether time_to_emergency is within the specified range
-    mbdata_df = mbdata_df[
-    (mbdata_df['time_to_emergency'] >= emergency_minutes_start) & 
-    (mbdata_df['time_to_emergency'] <= emergency_minutes_end)
-    ]
+      mbdata_df = mbdata_df[
+        (mbdata_df['time_to_emergency'] >= emergency_minutes_start) & 
+        (mbdata_df['time_to_emergency'] <= emergency_minutes_end)
+      ]
 
-    # Merge the mbdata rows with the time to emergency column back to the filtered_df
-    filtered_df = pd.concat([mbdata_df, ccdata_df])
+      filtered_df = pd.concat([mbdata_df, ccdata_df])
+    except Exception as e:
+      print(f"Error applying emergencyMinutes filter: {e}")
 
   ### Filter by authors
-  if request_data['authors'] and request_data['authors'] != []:
+  if 'authors' in request_data and request_data['authors']:
     filtered_df = filtered_df[filtered_df['author'].isin(request_data['authors'])]
 
   ### Filter by keywords in the message (case-insensitive)
-  if request_data['keywords']:
-      keyword_pattern = '|'.join([rf'\b{k}\b' for k in request_data['keywords']])
-      filtered_df = filtered_df[filtered_df['message'].str.contains(keyword_pattern, case=False, na=False)]
+  if 'keywords' in request_data and request_data['keywords']:
+    keyword_pattern = '|'.join([rf'\b{k}\b' for k in request_data['keywords']])
+    filtered_df = filtered_df[filtered_df['message'].str.contains(keyword_pattern, case=False, na=False)]
 
-  # Format df for html
+  ### Final display and summary
   html_df = filtered_df[filtered_df['type'] == 'mbdata'][['author', 'message']].to_html(classes="dataframe", index=False)
 
-  # Generate LLM summary
   summary = generate_summary(filtered_df)
   print("LLM SUMMARY:")
   print(summary)
