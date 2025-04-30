@@ -1,11 +1,15 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 from llmproxy import generate
 from collections import Counter
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
+import seaborn as sns
 import re
-
+import io
 app = Flask(__name__)
 df = pd.read_csv("Data/combined_clean.csv")
 
@@ -81,6 +85,33 @@ def generate_summary(filtered_df):
     rag_usage = False)
 
   return response.get("response", "") if isinstance(response, dict) else response
+
+# this graph is a visual of the density of messages over time
+@app.route('/chart-data')
+def chart_data():
+    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S')
+    df['minute'] = df['date'].dt.floor('min')
+
+    # Group by minute and count messages
+    message_counts = df[df['type'] == 'mbdata'].groupby('minute').size()
+    data = message_counts.tolist()
+
+    # Normalize heights for colormap
+    norm = mcolors.Normalize(vmin=min(data), vmax=max(data))
+    cmap = cm.get_cmap('rocket_r') 
+
+    # Generate RGBA hex colors for each bar
+    colors = [mcolors.to_hex(cmap(norm(val))) for val in data]
+
+    # Prepare x-axis labels
+    labels = [timestamp.strftime('%I:%M %p') for timestamp in message_counts.index]
+
+    return jsonify({
+        'labels': labels,
+        'data': data,
+        'colors': colors
+    })
+
 
 @app.route('/update', methods=["POST"])
 def update():
