@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
   </header>
 
 <body>
@@ -103,20 +104,7 @@
 
     const response = await fetch("/chart-data");
     const chartData = await response.json();
-
-    console.log("response", response);
-    console.log("chartData", chartData);
-    if (!response.ok) {
-      console.error("Error fetching chart data:", response.statusText);
-      return;
-    }
-    if (!chartData || !chartData.labels || !chartData.data) {
-      console.error("Invalid chart data format:", chartData);
-      return;
-    }
-  
     const ctx = document.getElementById('messageChart').getContext('2d');
-    console.log("ctx", ctx);
 
     const messageChart = new Chart(ctx, {
       type: 'bar', 
@@ -128,31 +116,66 @@
           backgroundColor: chartData.colors, 
           borderColor: chartData.colors, 
           borderWidth: 2,
-          // fill: true,
-          // tension: 0.3, // smooth curve
         }]
       },
       options: {
-        responsive: true,
-        scales: {
-          x: {
-            ticks: {
-              maxTicksLimit: 20
-            }
-          },
-          y: {
-            beginAtZero: true
-          }
+  responsive: true,
+  scales: {
+    x: {
+      ticks: {
+        maxTicksLimit: 20
+      }
+    },
+    y: {
+      beginAtZero: true
+    }
+  },
+  interaction: {
+    mode: 'index',
+    intersect: true
+  },
+  plugins: {
+    tooltip: {
+      enabled: true
+    },
+    zoom: {
+      pan: {
+        enabled: true,
+        mode: 'x',  // can also be 'y' or 'xy'
+        modifierKey: 'ctrl',  // optional: require Ctrl key to pan
+      },
+      zoom: {
+        wheel: {
+          enabled: true,  // Zoom with mouse wheel
         },
-        interaction: {
-          mode: 'index',
-          intersect: false
+        drag: {
+          enabled: true,  // Zoom by click-and-drag selection
         },
-        plugins: {
-          tooltip: {
-            enabled: true
-          }
-        }
+        mode: 'x',  // Zoom along x-axis (time)
+        onZoomComplete: ({chart}) => {
+          const minIdx = Math.floor(chart.scales.x.min);
+          const maxIdx = Math.ceil(chart.scales.x.max);
+          const newStart = chart.data.labels[minIdx];
+          const newEnd = chart.data.labels[maxIdx];
+
+          console.log("Zoom completed. New range:", newStart, "→", newEnd);
+
+          // Update dropdowns
+          document.getElementById('start-time').value = newStart;
+          document.getElementById('end-time').value = newEnd;
+      }
+      }
+    }
+  }
+}
+    });
+
+    // Add event listener for zoom
+    messageChart.canvas.addEventListener('wheel', function(event) {
+      if (event.ctrlKey) {
+        event.preventDefault();
+        const zoomFactor = event.deltaY < 0 ? 1.1 : 0.9;
+        messageChart.zoom(zoomFactor);
       }
     });
   }
