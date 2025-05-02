@@ -34,7 +34,7 @@ def index():
   html_df = df[df['type'] == 'mbdata'][['author', 'message']].to_html(classes="dataframe", index=False)
 
   # Generate time options from 5 PM to 10 PM in 15 minute increments
-  time_options = generate_time_options(5, 10, )
+  time_options = generate_time_options(5, 10, 1)
 
   # Get list of all authors in dataset
   authors = sorted(df[df['type'] == 'mbdata']['author'].unique())
