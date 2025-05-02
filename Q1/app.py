@@ -183,5 +183,9 @@ def update():
     "summary": summary
   }
 
+@app.route("/map_embed")
+def map_embed():
+    return render_template("map_embed.html")
+
 if __name__ == '__main__':
     app.run(debug=True)
