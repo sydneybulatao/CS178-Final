@@ -17,7 +17,7 @@ h1 {
 /* Container for filters */
 #filters-container {
   width: 50%;
-  margin: 30px auto;
+  margin: 20px auto;
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;
@@ -300,3 +300,38 @@ p {
   flex-wrap: wrap;
 }
 
+.main-content {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  padding: 20px 20px;
+}
+
+#plot-container {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(255, 133, 89, 0.05);
+  min-width: 600px; /* Make sure the plot takes up enough space */
+}
+
+#ai-summary-container {
+  width: 250px;
+  height: 600px;
+  background-color: #ffffff; /* Match the background color of the plot container */
+  padding: 20px 30px 20px 20px; /* Add padding on the right side */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(255, 133, 89, 0.05); /* Match the plot container shadow */
+  margin-right: 20px;
+}
+
+#ai-summary-container h3 {
+  color: #CF5376;
+  margin-bottom: 15px; /* Optional: Adds space between the header and the content */
+}
+
+#ai-summary-container p {
+  color: #666666;
+  font-size: 16px;
+}

@@ -78,18 +78,23 @@
     
   </div>
 
-  <div id="plot-container">
-    <h2>Message Frequency Graph</h2>
-    <canvas id="messageChart" width="800" height="400"></canvas>
-    <div id="messages-list" class="scroll-table">
-        {{ df | safe }}
-      </div>   
-
-  <!-- AI-Generated Summary Box -->
-  <div id="ai-summary-box" style="padding: 20px; margin-top: 20px; background-color: #f4f4f4; border: 1px solid #ccc;">
-    <h3>AI-Generated Summary</h3>
-    <p id="ai-summary-text">Apply filters to generate a summary.</p>
+  <div class="main-content">
+    <!-- Plot Container -->
+    <div id="plot-container">
+      <h2>Message Frequency Graph</h2>
+      <canvas id="messageChart" width="800" height="400"></canvas>
+      <div id="messages-list" class="scroll-table">
+          {{ df | safe }}
+      </div>
+    </div>
+  
+    <!-- AI Summary Container -->
+    <div id="ai-summary-container">
+      <h3>AI-Generated Summary</h3>
+      <p id="ai-summary-text">Apply filters to generate a summary.</p>
+    </div>
   </div>
+  
 
   </div>
 </div>
@@ -106,9 +111,6 @@
       <iframe id="map-frame" src="/map_embed"></iframe>
   </div>
 </div>
-
-
-
 
 </body>
 
