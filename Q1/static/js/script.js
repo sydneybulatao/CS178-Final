@@ -78,8 +78,25 @@ function update() {
     // Update display with results
     document.getElementById('messages-list').innerHTML = results.df;
     document.getElementById('ai-summary-text').innerHTML = results.summary;
+
+    // Update the chart
+    refreshChartData(); 
 })
 }
+
+function refreshChartData() {
+  console.log(messageChart)
+  fetch('/chart-data')
+    .then(response => response.json())
+    .then(data => {
+      messageChart.data.labels = data.labels;
+      messageChart.data.datasets[0].data = data.data;
+      messageChart.data.datasets[0].backgroundColor = data.colors;
+      messageChart.data.datasets[0].borderColor = data.colors;
+      messageChart.update();
+    });
+}
+
 
 function resetFilters() {
   // Reset start and end time select dropdowns to their default values

@@ -10,8 +10,11 @@ import matplotlib.colors as mcolors
 import seaborn as sns
 import re
 import io
+
 app = Flask(__name__)
 df = pd.read_csv("Data/combined_clean.csv")
+df_global = None
+
 
 def generate_time_options(start_hour, end_hour, increment_minutes):
   """
@@ -90,16 +93,20 @@ def generate_summary(filtered_df):
 # this graph is a visual of the density of messages over time
 @app.route('/chart-data')
 def chart_data():
-    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S')
-    df['minute'] = df['date'].dt.floor('min')
+    print("CHARTING DATA ---------------------------------------------------")
+    # get the filtered data if available
+    global df_global
+    active_df = df_global if df_global is not None else df
 
     # Group by minute and count messages
-    message_counts = df[df['type'] == 'mbdata'].groupby('minute').size()
+    active_df['date'] = pd.to_datetime(active_df['date'], format='%Y-%m-%d %H:%M:%S')
+    active_df['minute'] = active_df['date'].dt.floor('min')
+    message_counts = active_df[active_df['type'] == 'mbdata'].groupby('minute').size()
     data = message_counts.tolist()
 
     # Normalize heights for colormap
     norm = mcolors.Normalize(vmin=min(data), vmax=max(data))
-    cmap = cm.get_cmap('rocket_r') 
+    cmap = plt.get_cmap('rocket_r') 
 
     # Generate RGBA hex colors for each bar
     colors = [mcolors.to_hex(cmap(norm(val))) for val in data]
@@ -173,6 +180,10 @@ def update():
 
   ### Final display and summary
   html_df = filtered_df[filtered_df['type'] == 'mbdata'][['author', 'message']].to_html(classes="dataframe", index=False)
+
+  ### Update the global variable to update chart data
+  global df_global
+  df_global = filtered_df.copy()
 
   summary = generate_summary(filtered_df)
   print("LLM SUMMARY:")

@@ -116,13 +116,16 @@
 
 <!-- minute density chart -->
 <script>
+  // define this chart globally so other functions can access it
+  let messageChart;
+
   async function loadChartData() {
 
     const response = await fetch("/chart-data");
     const chartData = await response.json();
     const ctx = document.getElementById('messageChart').getContext('2d');
 
-    const messageChart = new Chart(ctx, {
+    messageChart = new Chart(ctx, {
       type: 'bar', 
       data: {
         labels: chartData.labels,
