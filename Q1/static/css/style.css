@@ -293,6 +293,21 @@ p {
   margin-bottom: 16px;
 }
 
+#ai-summary {
+  margin: 30px;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(255, 133, 89, 0.05);
+}
+
+.ai-summary-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
 .map-content-row {
   display: flex;
   gap: 20px;
